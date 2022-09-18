@@ -50,7 +50,50 @@ function main() {
         0.0, -0.12,  // bawah kiri
         0.0, -0.12,  // bawah kiri
         0.15, 0.1,  // atas kanan
-        0.15, -0.12  // bawah kanan
+        0.15, -0.12,  // bawah kanan
+
+        // D atas
+        0.36, 0.6, // A: kiri atas
+        0.36, 0.35, // B: kiri bawah
+        0.66, 0.6, // C: kanan atas
+        0.66, 0.6, // D: kanan atas
+        0.36, 0.35, // E: kiri bawah
+        0.6, 0.35, // F: kanan bawah
+        // D siku atas
+        0.66, 0.6, // A: kanan atas
+        0.71, 0.5, // B: kanan atas batang
+        0.6, 0.35, // C: kanan bawah
+        0.6, 0.35, // D: kanan bawah
+        0.71, 0.5, // E: kanan atas batang
+        0.62, 0.3, // F: kiri atas batang            
+        // D batang depan
+        0.62, 0.3, // A: kiri atas batang            
+        0.71, 0.5, // B: kanan atas batang
+        0.62, -0.15, // C: kiri bawah batang            
+        0.62, -0.15, // D: kiri bawah batang            
+        0.71, 0.5, // E: kanan atas batang
+        0.71, -0.3, // F: kanan bawah batang
+        // D siku bawah
+        0.62, -0.1, // A: kiri bawah batang         
+        0.71, -0.3, // B:kanan bawah batang
+        0.6, -0.15, // C: kanan atas
+        0.6, -0.15, // D: kanan atas
+        0.71, -0.3, // E: kanan bawah batang
+        0.66, -0.4, // F: kanan bawah
+        // D bawah
+        0.36, -0.15, // A: kiri atas
+        0.6, -0.15, // B: kanan atas
+        0.36, -0.4, // C: kiri bawah
+        0.36, -0.4, // D: kiri bawah
+        0.6, -0.15, // E: kanan atas
+        0.66, -0.4, // F: kanan bawah
+        // D batang belakang
+        0.36, 0.35, // A: kiri atas
+        0.45, 0.35, // B: kanan atas
+        0.36, -0.15, // C: kiri bawah
+        0.36, -0.15, // D: kiri bawah
+        0.45, 0.35, // E: kanan atas
+        0.45, -0.15, // F: kanan bawah
     ];
 
 
@@ -76,8 +119,8 @@ function main() {
     var fragmentShaderCode = `
     precision mediump float;
     void main() {
-        float r = 0.0;
-        float g = 0.0;
+        float r = 1.0;
+        float g = 1.0;
         float b = 1.0;
         gl_FragColor = vec4(r, g, b, 1.0);
     }
@@ -99,7 +142,7 @@ function main() {
     gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(aPosition);
 
-    gl.clearColor(1.0,      0.65,    0.0,    1.0);  // Oranye
+    gl.clearColor(0.17,      0.8,    0.44,    1.0);  // Oranye
     //            Merah     Hijau   Biru    Transparansi
     gl.clear(gl.COLOR_BUFFER_BIT);
 
@@ -108,4 +151,5 @@ function main() {
     gl.drawArrays(gl.LINE_LOOP, 7, 16);
     //Huruf
     gl.drawArrays(gl.TRIANGLES, 23, 18);
+    gl.drawArrays(gl.TRIANGLES, 41, 36);
 }
