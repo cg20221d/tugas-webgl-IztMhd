@@ -75,7 +75,7 @@ function main() {
     // Projection
     var uProjection = gl.getUniformLocation(shaderProgram, "uProjection");
     var perspective = glMatrix.mat4.create();
-    glMatrix.mat4.perspective(perspective, (5*Math.PI)/60, 1.0, 0.5, 50.0);
+    glMatrix.mat4.perspective(perspective, (5*Math.PI)/12, 1.0, 0.5, 50.0);
     
     // Kita mengajari GPU bagaimana caranya mengoleksi
     //  nilai posisi dari ARRAY_BUFFER
