@@ -1,19 +1,16 @@
-import { vertices, indices } from "./vertices_indices.js"
+import { vertices7, indices7, vertices5, indices5, verticesa, indicesa, verticesd, indicesd} from "./vertices_indices.js"
 
 function main() {
     var kanvas = document.getElementById("kanvas");
     var gl = kanvas.getContext("webgl");
     
-    var kanvas = document.getElementById("kanvas");
-    var gl = kanvas.getContext("webgl");
+    // var buffer = gl.createBuffer();
+    // gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices7), gl.STATIC_DRAW);
     
-    var buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-    
-    var indexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+    // var indexBuffer = gl.createBuffer();
+    // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    // gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices7), gl.STATIC_DRAW);
     
     // Vertex shader
     var vertexShaderCode = `
@@ -54,10 +51,13 @@ function main() {
     var theta = 0.0;
     var thetax = 0.0;
     var freeze = false;
-    var horizontalSpeed = 0.0;
+    var horizontalSpeed = 0.0075;
     var verticalSpeed = 0.0;
     var horizontalDelta = 0.0;
     var verticalDelta = 0.0;
+    var frame = 11.5;
+    var skalasiSpeed = 0.075;
+    var skalasiDelta = 0.0;
     
     // Variabel pointer ke GLSL
     var uModel = gl.getUniformLocation(shaderProgram, "uModel");
@@ -76,7 +76,7 @@ function main() {
     var uProjection = gl.getUniformLocation(shaderProgram, "uProjection");
     var perspective = glMatrix.mat4.create();
     glMatrix.mat4.perspective(perspective, (5*Math.PI)/12, 1.0, 0.5, 50.0);
-    
+
     // Kita mengajari GPU bagaimana caranya mengoleksi
     //  nilai posisi dari ARRAY_BUFFER
     //  untuk setiap verteks yang sedang diproses
@@ -104,22 +104,109 @@ function main() {
         // arrow-kanan
         theta += 0.1;
       }
-      // Gerakan vertikal: w ke atas, s ke bawah
+      // Gerakan vertikal: arrow-atas ke atas, arrow-bawah ke bawah
       if (event.keyCode == 38) {
-        // w
+        // arrow-atas
         thetax -= 0.1;
       } else if (event.keyCode == 40) {
-        // s
+        // arrow-bawah
         thetax += 0.1;
       }
     }
-    function onKeyup(event) {
-      if (event.keyCode == 32) freeze = !freeze;
-      if (event.keyCode == 37 || event.keyCode == 39) horizontalSpeed = 0.0;
-      if (event.keyCode == 38 || event.keyCode == 40) verticalSpeed = 0.0;
-    }
+    // function onKeyup(event) {
+    //   if (event.keyCode == 32) freeze = !freeze;
+    //   if (event.keyCode == 37 || event.keyCode == 39) horizontalSpeed = 0.0;
+    //   if (event.keyCode == 38 || event.keyCode == 40) verticalSpeed = 0.0;
+    // }
     document.addEventListener("keydown", onKeydown);
-    document.addEventListener("keyup", onKeyup);
+    //document.addEventListener("keyup", onKeyup);
+    
+    function drawObj(vertices, indices) { 
+      var buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+      
+      var indexBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+      
+      var aPosition = gl.getAttribLocation(shaderProgram, 'aPosition');
+      gl.vertexAttribPointer(aPosition, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
+      gl.enableVertexAttribArray(aPosition);
+      var aColor = gl.getAttribLocation(shaderProgram, 'aColor');
+      gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+      gl.enableVertexAttribArray(aColor);
+      
+      gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+    }
+
+    function draw7(vertices, indices) {
+      var model = glMatrix.mat4.create(); // Membuat matriks identitas
+      glMatrix.mat4.translate(
+        model, model, [horizontalDelta, verticalDelta, 0.0]
+      );
+  
+      if (horizontalDelta >= frame/1.84 || horizontalDelta <= -frame/2.4)
+          horizontalSpeed = horizontalSpeed * -1;
+
+      horizontalDelta += horizontalSpeed;
+      var uModel = gl.getUniformLocation(shaderProgram, "uModel");
+      var uView = gl.getUniformLocation(shaderProgram, "uView");
+      var uProjection = gl.getUniformLocation(shaderProgram, "uProjection"); 
+      gl.uniformMatrix4fv(uModel,false, model);
+      gl.uniformMatrix4fv(uView, false, view);
+      gl.uniformMatrix4fv(uProjection, false, perspective);
+      drawObj(vertices, indices);
+    }
+
+    function draw5(vertices, indices) {
+      var model = glMatrix.mat4.create(); // Membuat matriks identitas
+      glMatrix.mat4.translate(
+        model, model, [0, 0, skalasiDelta]
+      );
+  
+      if (skalasiDelta <= -0.5 || skalasiDelta >= 2) 
+          skalasiSpeed = skalasiSpeed * -1;
+
+      skalasiDelta += skalasiSpeed;
+      var uModel = gl.getUniformLocation(shaderProgram, "uModel");
+      var uView = gl.getUniformLocation(shaderProgram, "uView");
+      var uProjection = gl.getUniformLocation(shaderProgram, "uProjection"); 
+      gl.uniformMatrix4fv(uModel,false, model);
+      gl.uniformMatrix4fv(uView, false, view);
+      gl.uniformMatrix4fv(uProjection, false, perspective);
+      drawObj(vertices, indices);
+    }
+
+    function drawa(vertices, indices) {
+      var model = glMatrix.mat4.create(); // Membuat matriks identitas
+      glMatrix.mat4.rotateY(
+        model, model, theta
+      );
+      
+      var uModel = gl.getUniformLocation(shaderProgram, "uModel");
+      var uView = gl.getUniformLocation(shaderProgram, "uView");
+      var uProjection = gl.getUniformLocation(shaderProgram, "uProjection"); 
+      gl.uniformMatrix4fv(uModel,false, model);
+      gl.uniformMatrix4fv(uView, false, view);
+      gl.uniformMatrix4fv(uProjection, false, perspective);
+      drawObj(vertices, indices);
+    }
+
+    function drawd(vertices, indices) {
+      var model = glMatrix.mat4.create(); // Membuat matriks identitas
+      glMatrix.mat4.rotateX(
+        model, model, thetax
+      );
+      
+      var uModel = gl.getUniformLocation(shaderProgram, "uModel");
+      var uView = gl.getUniformLocation(shaderProgram, "uView");
+      var uProjection = gl.getUniformLocation(shaderProgram, "uProjection"); 
+      gl.uniformMatrix4fv(uModel,false, model);
+      gl.uniformMatrix4fv(uView, false, view);
+      gl.uniformMatrix4fv(uProjection, false, perspective);
+      drawObj(vertices, indices);
+    }
     
     function render() {
       gl.enable(gl.DEPTH_TEST);
@@ -144,7 +231,11 @@ function main() {
       gl.uniformMatrix4fv(uModel, false, model);
       gl.uniformMatrix4fv(uView, false, view);
       gl.uniformMatrix4fv(uProjection, false, perspective);
-      gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+      //gl.drawElements(gl.TRIANGLES, indices7.length, gl.UNSIGNED_SHORT, 0);
+      draw7(vertices7, indices7);
+      draw5(vertices5, indices5);
+      drawa(verticesa, indicesa);
+      drawd(verticesd, indicesd);
       requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
