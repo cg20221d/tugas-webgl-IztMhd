@@ -33,8 +33,12 @@ function main() {
     var fragmentShaderCode = `
       precision mediump float;
       varying vec3 vColor;
+      uniform vec3 uAmbientConstant;      // merepresentasikan warna sumber cahaya
+      uniform float uAmbientIntensity;    // merepresentasikan intensitas cahaya sekitar
       void main() {
-          gl_FragColor = vec4(vColor, 1.0);
+        vec3 ambient = uAmbientConstant * uAmbientIntensity;
+        vec3 phong = ambient;
+        gl_FragColor = vec4(phong * vColor, 1.0);
       }
       `;
     var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
@@ -87,6 +91,12 @@ function main() {
     gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
     gl.enableVertexAttribArray(aColor);
     
+    // Untuk pencahayaan dan pembayangan
+    var uAmbientConstant = gl.getUniformLocation(shaderProgram, "uAmbientConstant");
+    var uAmbientIntensity = gl.getUniformLocation(shaderProgram, "uAmbientIntensity");
+    gl.uniform3fv(uAmbientConstant, [1.0, 0.5, 1.0]);   // warna sumber cahaya: oranye
+    gl.uniform1f(uAmbientIntensity, 0.375);               // intensitas cahaya: 37.5%
+
     // Grafika interaktif
     // Tetikus
     function onMouseClick(event) {
@@ -176,7 +186,7 @@ function main() {
     
     function render() {
       gl.enable(gl.DEPTH_TEST);
-      gl.clearColor(0.17,      0.8,    0.44,    1.0);  // Oranye
+      gl.clearColor(0.0,      0.0,    0.0,    1.0);  // Hitam
       //            Merah     Hijau   Biru    Transparansi
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       if (!freeze) {
