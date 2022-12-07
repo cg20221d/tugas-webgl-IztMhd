@@ -1,4 +1,4 @@
-import { vertices7, indices7, vertices5, indices5, verticesa, indicesa, verticesd, indicesd} from "./vertices_indices.js"
+import { vertices7, indices7, verticesa, indicesa} from "./vertices_indices.js"
 
 function main() {
     var kanvas = document.getElementById("kanvas");
@@ -159,44 +159,10 @@ function main() {
       drawObj(vertices, indices);
     }
 
-    function draw5(vertices, indices) {
-      var model = glMatrix.mat4.create(); // Membuat matriks identitas
-      glMatrix.mat4.translate(
-        model, model, [0, 0, skalasiDelta]
-      );
-  
-      if (skalasiDelta <= -0.5 || skalasiDelta >= 2) 
-          skalasiSpeed = skalasiSpeed * -1;
-
-      skalasiDelta += skalasiSpeed;
-      var uModel = gl.getUniformLocation(shaderProgram, "uModel");
-      var uView = gl.getUniformLocation(shaderProgram, "uView");
-      var uProjection = gl.getUniformLocation(shaderProgram, "uProjection"); 
-      gl.uniformMatrix4fv(uModel,false, model);
-      gl.uniformMatrix4fv(uView, false, view);
-      gl.uniformMatrix4fv(uProjection, false, perspective);
-      drawObj(vertices, indices);
-    }
-
     function drawa(vertices, indices) {
       var model = glMatrix.mat4.create(); // Membuat matriks identitas
       glMatrix.mat4.rotateY(
         model, model, theta
-      );
-      
-      var uModel = gl.getUniformLocation(shaderProgram, "uModel");
-      var uView = gl.getUniformLocation(shaderProgram, "uView");
-      var uProjection = gl.getUniformLocation(shaderProgram, "uProjection"); 
-      gl.uniformMatrix4fv(uModel,false, model);
-      gl.uniformMatrix4fv(uView, false, view);
-      gl.uniformMatrix4fv(uProjection, false, perspective);
-      drawObj(vertices, indices);
-    }
-
-    function drawd(vertices, indices) {
-      var model = glMatrix.mat4.create(); // Membuat matriks identitas
-      glMatrix.mat4.rotateX(
-        model, model, thetax
       );
       
       var uModel = gl.getUniformLocation(shaderProgram, "uModel");
@@ -233,9 +199,7 @@ function main() {
       gl.uniformMatrix4fv(uProjection, false, perspective);
       //gl.drawElements(gl.TRIANGLES, indices7.length, gl.UNSIGNED_SHORT, 0);
       draw7(vertices7, indices7);
-      draw5(vertices5, indices5);
       drawa(verticesa, indicesa);
-      drawd(verticesd, indicesd);
       requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
